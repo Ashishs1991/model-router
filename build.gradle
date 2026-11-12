@@ -1,0 +1,21 @@
+plugins {
+    id 'java-library'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 17
+}
+
+tasks.register('contractCheck', JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'router.ContractCheck'
+}
+
+tasks.named('check') {
+    dependsOn 'contractCheck'
+}
+
+// The offline checks are Java entry points run by JavaExec.
+tasks.named('test') {
+    enabled = false
+}

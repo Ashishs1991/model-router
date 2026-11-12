@@ -2,7 +2,7 @@
 
 This project is designing a standalone Java library that selects and invokes a language model for an application's request. The application supplies the task, quality expectations, budget, and latency preferences. The operator configures models and provider credentials centrally. Backend services, batch jobs, and agents can use the same interface.
 
-**Status** · Specification and plan are complete. Java implementation and benchmarks are pending.
+**Status** · The Java contract and Gradle build are in place. Routing, provider integration and benchmarks are pending.
 
 ## How a request will work
 
@@ -19,3 +19,7 @@ The first evaluation will cover text classification and structured extraction ac
 - [Specification](SPEC.md) covers the request and result, routing behavior, acceptance criteria, and scope.
 - [Implementation plan](PLAN.md) tracks milestones, verification, and open decisions.
 - [Repository working rules](AGENTS.md) explain how to document, test, and commit changes.
+
+## Build and verify
+
+Use JDK 17 or newer. Run `./gradlew --version` once to download and verify the pinned distribution, then run `./gradlew --offline clean check`. See the [module guides](docs/README.md).

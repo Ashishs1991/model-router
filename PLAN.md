@@ -2,14 +2,14 @@
 
 ## Current status
 
-Documentation foundation complete. No application code, build configuration, provider integration, or benchmark results exist yet. The implementation language is Java; exact runtime and build choices remain part of milestone 1.
+The Java contract and offline build are complete. Model selection, provider integration and evaluation are pending.
 
 ## Ordered milestones
 
 | Milestone | Status | Deliverables | Verification required |
 | --- | --- | --- | --- |
 | 0. Define the project | Complete | SPEC.md, PLAN.md, AGENTS.md | Review scope, interface, acceptance criteria, exclusions, module-guide rule, and commit workflow |
-| 1. Establish the Java project and contract | Not started | Build setup, request/result/error types, fake provider, first module guides | Clean build and offline contract tests; invalid inputs and unknown profiles rejected |
+| 1. Establish the Java project and contract | Complete | Build setup, request/result/error types, fake provider, first module guides | Clean build and offline contract tests; invalid inputs and unknown profiles rejected |
 | 2. Add registry and provider adapters | Not started | Central configuration, two adapters, normalized usage and failures | Offline adapter tests including timeout, malformed response, unavailable usage, and secret redaction; optional capped live smoke checks |
 | 3. Implement deterministic selection | Not started | Capability filtering, measured profiles, cost/latency estimates, decision reasons | Tests for eligibility, missing evidence, no qualifying candidate, deterministic ties, and budget boundaries |
 | 4. Complete invocation and bounded recovery | Not started | Validation, shared deadline, optional single fallback, attempt measurements | Tests showing fallback preserves restrictions, budget, deadline, and total attempt accounting |
@@ -31,10 +31,16 @@ Complete each milestone in small coherent commits. A milestone may need several 
 
 For subsequent milestones, add the date, exact verification command, observed result, and a repository-relative link to any report. Record failures and skipped checks explicitly. Use the relevant commit subject or hash when available; do not add a commit merely to embed its own hash.
 
+### Milestone 1 — Gradle build and Java contract
+
+- 2026-11-12. Selected installed JDK 20.0.1, Java 17 bytecode target and Gradle Wrapper 9.0.0.
+- `./gradlew --version` confirmed the wrapper and launcher versions.
+- `./gradlew --offline --no-daemon clean check` initially passed contract checks but failed framework discovery. The build now explicitly runs the standalone contract suite through JavaExec. The clean rerun passed compilation, invalid request, unknown profile and unknown usage checks.
+- See the [contract guide](docs/modules/contract.md). Continue with the model registry and provider integration.
+
 ## Blockers and pending decisions
 
 - Live integration and measurement require provider/model choices, credentials, and a declared evaluation spending limit. These do not block offline implementation.
-- Java version and build tool will be selected at milestone 1 after inspecting the development environment.
 - Task quality thresholds and the p95 latency target must be calibrated and frozen before held-out evaluation.
 
 ## Update rules
