@@ -26,12 +26,13 @@ Complete each milestone in small coherent commits. A milestone may need several 
 - Reviewed AGENTS.md for module documentation, plain-language explanations, testing expectations, and small commit/push rules.
 - Checked that all three required Markdown documents are present and contain no implementation or performance claims presented as completed work.
 - The initial Git commit records this documentation foundation. No code tests apply at this stage.
+- GitHub accepted the initial commit `c8d90cd`. Local `main` tracks `origin/main`.
+- Checked all README links against the repository files and ran `git diff --cached --check` for the README update.
 
 For subsequent milestones, add the date, exact verification command, observed result, and a repository-relative link to any report. Record failures and skipped checks explicitly. Use the relevant commit subject or hash when available; do not add a commit merely to embed its own hash.
 
 ## Blockers and pending decisions
 
-- Remote push is pending: no remote destination has been supplied or configured. Local commits can proceed. Do not invent a hosting account, repository visibility, or remote URL.
 - Live integration and measurement require provider/model choices, credentials, and a declared evaluation spending limit. These do not block offline implementation.
 - Java version and build tool will be selected at milestone 1 after inspecting the development environment.
 - Task quality thresholds and the p95 latency target must be calibrated and frozen before held-out evaluation.
