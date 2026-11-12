@@ -42,6 +42,11 @@ public final class InvocationCheck {
                 RouteFailure.Code.DEADLINE_EXCEEDED);
         expect(router((id, req, time) -> new Provider.Reply("bad", null), good, true),
                 request("0.000004", 1000, Set.of("a")), RouteFailure.Code.INVALID_OUTPUT);
+        var slowValidator = router(good, good, true, (schema, output) -> {
+            blocked.invoke("", null, java.time.Duration.ZERO);
+            return true;
+        });
+        expect(slowValidator, request("0.000004", 200, Set.of()), RouteFailure.Code.DEADLINE_EXCEEDED);
         System.out.println("Invocation checks passed");
     }
 
@@ -64,13 +69,18 @@ public final class InvocationCheck {
     }
 
     private static ModelRouter router(Provider a, Provider b, boolean fallback) {
+        return router(a, b, fallback, (schema, output) -> output.equals("ok"));
+    }
+
+    private static ModelRouter router(Provider a, Provider b, boolean fallback,
+                                      java.util.function.BiPredicate<String, String> validator) {
         var registry = new ModelRegistry(List.of(model("a", a), model("b", b)));
         var evidence = new RoutingPolicy.Evidence(true, 1);
         var policy = new RoutingPolicy("fixture", Map.of(
                 new RoutingPolicy.Key("extract", "standard", "a"), evidence,
                 new RoutingPolicy.Key("extract", "standard", "b"), evidence));
         return new ModelRouter(new TaskProfiles(Map.of("extract", Set.of("standard"))),
-                registry, policy, (schema, output) -> output.equals("ok"), fallback);
+                registry, policy, validator, fallback);
     }
 
     private static ModelRegistry.Model model(String alias, Provider provider) {

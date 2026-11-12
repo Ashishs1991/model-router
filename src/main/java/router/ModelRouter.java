@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -40,8 +41,15 @@ public final class ModelRouter {
         for (int i = 0; i < (fallback ? 2 : 1); i++) {
             long remaining = remaining(start, allowance);
             if (remaining <= 0) throw new RouteFailure(DEADLINE_EXCEEDED, attempts);
-            var candidate = policy.candidates(registry, request, budget,
-                            TimeUnit.NANOSECONDS.toMillis(remaining)).stream()
+            var budgetAtSelection = budget;
+            java.util.List<RoutingPolicy.Candidate> eligible;
+            try {
+                eligible = withinDeadline(() -> policy.candidates(registry, request, budgetAtSelection,
+                        TimeUnit.NANOSECONDS.toMillis(remaining(start, allowance))), start, allowance);
+            } catch (RouteFailure failure) {
+                throw new RouteFailure(failure.code(), attempts);
+            }
+            var candidate = eligible.stream()
                     .filter(c -> attempts.stream().noneMatch(a -> a.modelAlias().equals(c.model().alias())))
                     .findFirst();
             if (remaining(start, allowance) <= 0) throw new RouteFailure(DEADLINE_EXCEEDED, attempts);
@@ -55,13 +63,17 @@ public final class ModelRouter {
             RouteFailure.Code failure = null;
             try {
                 reply = call(model, request, start, allowance);
-                if (reply == null || reply.output() == null || reply.output().isBlank() ||
-                        (request.outputSchema() != null &&
-                                !schemaValidator.test(request.outputSchema(), reply.output()))) {
+                String output = reply == null ? null : reply.output();
+                if (output == null || output.isBlank() ||
+                        (request.outputSchema() != null && !withinDeadline(
+                                () -> schemaValidator.test(request.outputSchema(), output), start, allowance))) {
                     failure = INVALID_OUTPUT;
                 }
             } catch (RouteFailure error) {
                 failure = error.code();
+                if (reply != null && failure == PROVIDER_FAILURE && !Thread.currentThread().isInterrupted()) {
+                    failure = INVALID_OUTPUT;
+                }
             } catch (RuntimeException error) {
                 failure = INVALID_OUTPUT;
             }
@@ -87,14 +99,17 @@ public final class ModelRouter {
 
     private static Provider.Reply call(ModelRegistry.Model model, RouteRequest request,
                                       long start, long allowance) {
-        var job = new FutureTask<>(() -> {
+        return withinDeadline(() -> {
             long remaining = remaining(start, allowance);
             if (remaining <= 0) throw new RouteFailure(DEADLINE_EXCEEDED);
             return model.provider().invoke(model.providerModelId(), request, Duration.ofNanos(remaining));
-        });
-        long remaining = remaining(start, allowance);
-        if (remaining <= 0) throw new RouteFailure(DEADLINE_EXCEEDED);
-        var worker = new Thread(job, "router-provider");
+        }, start, allowance);
+    }
+
+    private static <T> T withinDeadline(Callable<T> operation, long start, long allowance) {
+        var job = new FutureTask<>(operation);
+        if (remaining(start, allowance) <= 0) throw new RouteFailure(DEADLINE_EXCEEDED);
+        var worker = new Thread(job, "model-router");
         worker.setDaemon(true);
         worker.start();
         try {

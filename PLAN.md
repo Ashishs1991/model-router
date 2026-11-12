@@ -46,6 +46,7 @@ For subsequent milestones, add the date, exact verification command, observed re
 ### Milestone 4 — invocation and recovery
 
 - 2026-11-12. `./gradlew --offline --no-daemon check` passed contract, policy and invocation suites. Verified fallback cost, restriction enforcement, deadline cancellation, invalid output and safe errors with fake providers.
+- 2026-11-12. After extending the deadline to token estimation and schema validation, `./gradlew --offline --no-daemon check sample offlinePilot jar` passed, including a blocked-validator regression.
 - [Invocation guide](docs/modules/invocation.md). Real adapters and live benchmark evidence are still pending.
 
 ### Milestone 2 — provider adapter fixtures
