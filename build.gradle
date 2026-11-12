@@ -28,3 +28,12 @@ tasks.register('policyCheck', JavaExec) {
 tasks.named('check') {
     dependsOn 'policyCheck'
 }
+
+tasks.register('invocationCheck', JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'router.InvocationCheck'
+}
+
+tasks.named('check') {
+    dependsOn 'invocationCheck'
+}
