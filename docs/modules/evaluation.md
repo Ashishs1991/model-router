@@ -1,0 +1,7 @@
+# Evaluation runner
+
+A labeled case names its task, split, near duplicate group, request and expected output. For example, an extraction case can expect a JSON object with invoice ID and total. Group related examples together. The runner rejects duplicate IDs and groups or normalized inputs shared between splits. It invokes every supplied policy on each held-out case and rotates policy order. Supply a router policy, one fixed policy for each model and a task mapping.
+
+Classification succeeds on an exact label match. Extraction succeeds on full JSON object equality. Field accuracy gives partial credit. Schema validity uses the router validation result and requires a JSON object. Failures remain in the denominator, and unknown attempt charges make cost aggregates unavailable. Latency measures the full call and percentiles use nearest rank. Report aggregate and per-task metrics by summarizing their respective observation lists. The Wilson interval describes success uncertainty for independent observations. For repeated live runs use one observation per distinct case for that interval or account for repeated cases separately.
+
+Run `./gradlew --offline check` to verify dataset separation, held-out execution, failures, costs and metric arithmetic. See the [runner](../../src/main/java/router/Evaluation.java) and [checks](../../src/test/java/router/EvaluationCheck.java). Offline fixtures provide no model quality or live latency evidence.

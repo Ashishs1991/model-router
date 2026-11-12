@@ -2,7 +2,7 @@
 
 ## Current status
 
-The Java contract and offline build are complete. The registry and selection policy pass offline checks. Invocation and bounded recovery pass fixture checks. Two provider protocols pass offline fixture checks. Evaluation and live validation remain pending.
+The Java contract and offline build are complete. The registry and selection policy pass offline checks. Invocation and bounded recovery pass fixture checks. Two provider protocols pass offline fixture checks. The evaluation runner passes offline checks. The pilot, sample and live evidence remain pending.
 
 ## Ordered milestones
 
@@ -13,7 +13,7 @@ The Java contract and offline build are complete. The registry and selection pol
 | 2. Add registry and provider adapters | In progress | Central configuration, two adapters, normalized usage and failures | Offline adapter tests including timeout, malformed response, unavailable usage, and secret redaction; optional capped live smoke checks |
 | 3. Implement deterministic selection | Complete | Capability filtering, measured profiles, cost/latency estimates, decision reasons | Tests for eligibility, missing evidence, no qualifying candidate, deterministic ties, and budget boundaries |
 | 4. Complete invocation and bounded recovery | Complete | Validation, shared deadline, optional single fallback, attempt measurements | Tests showing fallback preserves restrictions, budget, deadline, and total attempt accounting |
-| 5. Build reproducible evaluation | Not started | Labeled datasets, separated splits, fixed-model and task-policy baselines, metrics | Offline metric checks; split-leakage checks; recorded pilot costs before expanding live runs |
+| 5. Build reproducible evaluation | In progress | Labeled datasets, separated splits, fixed-model and task-policy baselines, metrics | Offline metric checks; split-leakage checks; recorded pilot costs before expanding live runs |
 | 6. Measure and explain results | Not started | Sample application, live comparison report, tradeoff plots, limitations, updated guides | Repeatable evaluation commands, per-task metrics and uncertainty; clear evidence of any achieved tradeoff |
 
 Complete each milestone in small coherent commits. A milestone may need several commits; do not accumulate all milestones into one change.
@@ -52,6 +52,11 @@ For subsequent milestones, add the date, exact verification command, observed re
 
 - 2026-11-12. `./gradlew --no-daemon check` resolved pinned Jackson dependencies and passed. `./gradlew --offline --no-daemon clean check` passed all four offline suites.
 - [Adapter guide](docs/modules/providers.md). Tests used local transport fixtures for both protocols, malformed responses, missing usage, timeout and secret redaction. No live requests were sent. Exact model IDs, credential setup and total spend allowance remain pending.
+
+### Milestone 5 — evaluation runner
+
+- 2026-11-12. `./gradlew --offline --no-daemon check` passed five suites. Evaluation checks verified split isolation, held-out execution, failure and unknown cost handling, percentile and metric arithmetic.
+- [Evaluation guide](docs/modules/evaluation.md). The labeled pilot and policy comparison are the next step. Live evidence requires model IDs, cost bounds, credentials and an approved allowance.
 
 ## Blockers and pending decisions
 

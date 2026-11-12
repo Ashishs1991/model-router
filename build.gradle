@@ -54,3 +54,12 @@ tasks.register('providerCheck', JavaExec) {
 tasks.named('check') {
     dependsOn 'providerCheck'
 }
+
+tasks.register('evaluationCheck', JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'router.EvaluationCheck'
+}
+
+tasks.named('check') {
+    dependsOn 'evaluationCheck'
+}
