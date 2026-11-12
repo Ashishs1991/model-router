@@ -37,3 +37,20 @@ tasks.register('invocationCheck', JavaExec) {
 tasks.named('check') {
     dependsOn 'invocationCheck'
 }
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.20.0'
+}
+
+tasks.register('providerCheck', JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'router.ProviderCheck'
+}
+
+tasks.named('check') {
+    dependsOn 'providerCheck'
+}

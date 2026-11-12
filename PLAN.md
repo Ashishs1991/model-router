@@ -2,7 +2,7 @@
 
 ## Current status
 
-The Java contract and offline build are complete. The registry and selection policy pass offline checks. Invocation and bounded recovery pass fixture checks. Provider adapters and evaluation remain pending.
+The Java contract and offline build are complete. The registry and selection policy pass offline checks. Invocation and bounded recovery pass fixture checks. Two provider protocols pass offline fixture checks. Evaluation and live validation remain pending.
 
 ## Ordered milestones
 
@@ -47,6 +47,11 @@ For subsequent milestones, add the date, exact verification command, observed re
 
 - 2026-11-12. `./gradlew --offline --no-daemon check` passed contract, policy and invocation suites. Verified fallback cost, restriction enforcement, deadline cancellation, invalid output and safe errors with fake providers.
 - [Invocation guide](docs/modules/invocation.md). Real adapters and live benchmark evidence are still pending.
+
+### Milestone 2 — provider adapter fixtures
+
+- 2026-11-12. `./gradlew --no-daemon check` resolved pinned Jackson dependencies and passed. `./gradlew --offline --no-daemon clean check` passed all four offline suites.
+- [Adapter guide](docs/modules/providers.md). Tests used local transport fixtures for both protocols, malformed responses, missing usage, timeout and secret redaction. No live requests were sent. Exact model IDs, credential setup and total spend allowance remain pending.
 
 ## Blockers and pending decisions
 
