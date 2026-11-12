@@ -2,7 +2,7 @@
 
 ## Current status
 
-The Java contract and offline build are complete. Model selection, provider integration and evaluation are pending.
+The Java contract and offline build are complete. The registry and selection policy pass offline checks. Provider integration, invocation and evaluation are pending.
 
 ## Ordered milestones
 
@@ -10,8 +10,8 @@ The Java contract and offline build are complete. Model selection, provider inte
 | --- | --- | --- | --- |
 | 0. Define the project | Complete | SPEC.md, PLAN.md, AGENTS.md | Review scope, interface, acceptance criteria, exclusions, module-guide rule, and commit workflow |
 | 1. Establish the Java project and contract | Complete | Build setup, request/result/error types, fake provider, first module guides | Clean build and offline contract tests; invalid inputs and unknown profiles rejected |
-| 2. Add registry and provider adapters | Not started | Central configuration, two adapters, normalized usage and failures | Offline adapter tests including timeout, malformed response, unavailable usage, and secret redaction; optional capped live smoke checks |
-| 3. Implement deterministic selection | Not started | Capability filtering, measured profiles, cost/latency estimates, decision reasons | Tests for eligibility, missing evidence, no qualifying candidate, deterministic ties, and budget boundaries |
+| 2. Add registry and provider adapters | In progress | Central configuration, two adapters, normalized usage and failures | Offline adapter tests including timeout, malformed response, unavailable usage, and secret redaction; optional capped live smoke checks |
+| 3. Implement deterministic selection | Complete | Capability filtering, measured profiles, cost/latency estimates, decision reasons | Tests for eligibility, missing evidence, no qualifying candidate, deterministic ties, and budget boundaries |
 | 4. Complete invocation and bounded recovery | Not started | Validation, shared deadline, optional single fallback, attempt measurements | Tests showing fallback preserves restrictions, budget, deadline, and total attempt accounting |
 | 5. Build reproducible evaluation | Not started | Labeled datasets, separated splits, fixed-model and task-policy baselines, metrics | Offline metric checks; split-leakage checks; recorded pilot costs before expanding live runs |
 | 6. Measure and explain results | Not started | Sample application, live comparison report, tradeoff plots, limitations, updated guides | Repeatable evaluation commands, per-task metrics and uncertainty; clear evidence of any achieved tradeoff |
@@ -37,6 +37,11 @@ For subsequent milestones, add the date, exact verification command, observed re
 - `./gradlew --version` confirmed the wrapper and launcher versions.
 - `./gradlew --offline --no-daemon clean check` initially passed contract checks but failed framework discovery. The build now explicitly runs the standalone contract suite through JavaExec. The clean rerun passed compilation, invalid request, unknown profile and unknown usage checks.
 - See the [contract guide](docs/modules/contract.md). Continue with the model registry and provider integration.
+
+### Milestones 2 and 3 — registry and selection
+
+- 2026-11-12. `./gradlew --offline --no-daemon check` passed contract and policy suites, including duplicate aliases, capability and context filtering, missing evidence, budget boundaries, unknown pricing, deadline allowance and deterministic ties.
+- [Registry and selection guide](docs/modules/selection.md). Provider adapters remain pending. Fixture evidence is synthetic.
 
 ## Blockers and pending decisions
 

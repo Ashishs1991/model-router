@@ -19,3 +19,12 @@ tasks.named('check') {
 tasks.named('test') {
     enabled = false
 }
+
+tasks.register('policyCheck', JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'router.PolicyCheck'
+}
+
+tasks.named('check') {
+    dependsOn 'policyCheck'
+}
