@@ -63,3 +63,14 @@ tasks.register('evaluationCheck', JavaExec) {
 tasks.named('check') {
     dependsOn 'evaluationCheck'
 }
+
+tasks.register('sample', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'router.Sample'
+}
+
+tasks.register('offlinePilot', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'router.Sample'
+    args '--pilot'
+}

@@ -1,10 +1,10 @@
 # LLM Model Router
 
-This project is designing a standalone Java library that selects and invokes a language model for an application's request. The application supplies the task, quality expectations, budget, and latency preferences. The operator configures models and provider credentials centrally. Backend services, batch jobs, and agents can use the same interface.
+This project implements a standalone Java library that selects and invokes a language model for an application's request. The application supplies the task, quality expectations, budget, and latency preferences. The operator configures models and provider credentials centrally. Backend services, batch jobs, and agents can use the same interface.
 
-**Status** · The Java contract and Gradle build are in place. Routing, provider integration and benchmarks are pending.
+**Status** · The router, provider adapter fixtures, sample and synthetic pilot pass offline checks. Live model validation and benchmark evidence are pending.
 
-## How a request will work
+## How a request works
 
 1. The application calls `ModelRouter.invoke(request)` with a registered task and its constraints. For example, a document processor could request invoice field extraction as JSON, with a $0.01 budget and a 1,500 ms latency target.
 2. The router filters out models that cannot meet the requirements. It uses past task evaluations and cost estimates to select the cheapest eligible model predicted to meet the quality and latency targets. If none qualifies, the caller receives a structured failure.
@@ -22,4 +22,11 @@ The first evaluation will cover text classification and structured extraction ac
 
 ## Build and verify
 
-Use JDK 17 or newer. Run `./gradlew --version` once to download and verify the pinned distribution, then run `./gradlew --offline clean check`. See the [module guides](docs/README.md).
+Use JDK 17 or newer. The wrapper pins Gradle 9.0.0. The first command downloads Gradle and its dependencies. The second runs from the local cache.
+
+```sh
+./gradlew check
+./gradlew --offline clean check sample offlinePilot jar
+```
+
+The sample runs with fake providers and demonstrates one fallback. The pilot compares routing, two fixed models and a task mapping on held-out fixtures. See the [module guides](docs/README.md) for details and the [plan](PLAN.md) for verification evidence.

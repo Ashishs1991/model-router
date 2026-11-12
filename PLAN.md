@@ -2,7 +2,7 @@
 
 ## Current status
 
-The Java contract and offline build are complete. The registry and selection policy pass offline checks. Invocation and bounded recovery pass fixture checks. Two provider protocols pass offline fixture checks. The evaluation runner passes offline checks. The pilot, sample and live evidence remain pending.
+The Java router, two provider protocol adapters, sample and synthetic pilot run offline. Live smoke checks, calibration and measured tradeoff evidence are pending.
 
 ## Ordered milestones
 
@@ -10,11 +10,11 @@ The Java contract and offline build are complete. The registry and selection pol
 | --- | --- | --- | --- |
 | 0. Define the project | Complete | SPEC.md, PLAN.md, AGENTS.md | Review scope, interface, acceptance criteria, exclusions, module-guide rule, and commit workflow |
 | 1. Establish the Java project and contract | Complete | Build setup, request/result/error types, fake provider, first module guides | Clean build and offline contract tests; invalid inputs and unknown profiles rejected |
-| 2. Add registry and provider adapters | In progress | Central configuration, two adapters, normalized usage and failures | Offline adapter tests including timeout, malformed response, unavailable usage, and secret redaction; optional capped live smoke checks |
+| 2. Add registry and provider adapters | Blocked | Central configuration, two adapters, normalized usage and failures | Offline adapter tests including timeout, malformed response, unavailable usage, and secret redaction; optional capped live smoke checks |
 | 3. Implement deterministic selection | Complete | Capability filtering, measured profiles, cost/latency estimates, decision reasons | Tests for eligibility, missing evidence, no qualifying candidate, deterministic ties, and budget boundaries |
 | 4. Complete invocation and bounded recovery | Complete | Validation, shared deadline, optional single fallback, attempt measurements | Tests showing fallback preserves restrictions, budget, deadline, and total attempt accounting |
-| 5. Build reproducible evaluation | In progress | Labeled datasets, separated splits, fixed-model and task-policy baselines, metrics | Offline metric checks; split-leakage checks; recorded pilot costs before expanding live runs |
-| 6. Measure and explain results | Not started | Sample application, live comparison report, tradeoff plots, limitations, updated guides | Repeatable evaluation commands, per-task metrics and uncertainty; clear evidence of any achieved tradeoff |
+| 5. Build reproducible evaluation | Complete | Labeled datasets, separated splits, fixed-model and task-policy baselines, metrics | Offline metric checks; split-leakage checks; recorded pilot costs before expanding live runs |
+| 6. Measure and explain results | Blocked | Sample application, live comparison report, tradeoff plots, limitations, updated guides | Repeatable evaluation commands, per-task metrics and uncertainty; clear evidence of any achieved tradeoff |
 
 Complete each milestone in small coherent commits. A milestone may need several commits; do not accumulate all milestones into one change.
 
@@ -56,7 +56,13 @@ For subsequent milestones, add the date, exact verification command, observed re
 ### Milestone 5 — evaluation runner
 
 - 2026-11-12. `./gradlew --offline --no-daemon check` passed five suites. Evaluation checks verified split isolation, held-out execution, failure and unknown cost handling, percentile and metric arithmetic.
-- [Evaluation guide](docs/modules/evaluation.md). The labeled pilot and policy comparison are the next step. Live evidence requires model IDs, cost bounds, credentials and an approved allowance.
+- [Evaluation guide](docs/modules/evaluation.md). The labeled pilot and policy comparison are implemented in the sample. Live evidence requires model IDs, cost bounds, credentials and an approved allowance.
+
+### Milestones 5 and 6 — sample and synthetic pilot
+
+- 2026-11-12. `./gradlew --offline --no-daemon clean check sample offlinePilot jar` passed five suites, ran the sample with two attempts, printed the four-policy pilot report and produced the library JAR.
+- Synthetic held-out success was 3/4 routed, 2/4 fixed economy, 4/4 fixed quality and 3/4 for the task mapping. All costs, model behavior and evidence profiles are fixtures. Local timings do not predict provider latency. See the [sample guide](docs/modules/sample.md).
+- A real model comparison has not been run. Before a paid pilot, confirm two model IDs and capability, pricing and input-bound data, configure credentials locally, declare a total allowance and freeze the evaluation thresholds. The runner and all offline checks are available independently.
 
 ## Blockers and pending decisions
 
